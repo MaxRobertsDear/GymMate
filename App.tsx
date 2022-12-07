@@ -1,19 +1,39 @@
 import {
   Canvas,
+  Circle,
   Easing,
+  Group,
+  Paint,
   Path,
   runTiming,
+  SkiaValue,
   useComputedValue,
+  useTouchHandler,
   useValue,
+  useDerivedValue,
+  add,
+  clamp,
+  dist,
+  runDecay,
+  SkiaMutableValue,
+  vec,
 } from "@shopify/react-native-skia";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Pressable, StyleSheet, View, Text } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  useWindowDimensions,
+} from "react-native";
 import { GRAPH_HEIGHT, GRAPH_WIDTH } from "./constants";
 import { originalData } from "./Data";
 import makeGraph from "./utils/makeGraph";
 import sliceIntoChunks from "./utils/sliceIntoChunks";
 import { Picker } from "@react-native-picker/picker";
+
+const GRAPH_COLOUR = "#F7B49E";
 
 enum GOING {
   FORWARD = "FORWARD",
@@ -25,6 +45,35 @@ type TransitionState = {
   prevChart: number;
   currentChart: number;
   nextChart: number;
+};
+
+interface CursorProps {
+  x: SkiaValue<number>;
+}
+
+const Cursor: React.FC<CursorProps> = ({ x }) => {
+  const transform = useComputedValue(
+    () => [{ translateX: x.current }, { translateY: 100 }],
+    [x]
+  );
+  return (
+    <Group transform={transform}>
+      <Circle cx={0} cy={0} r={27} color={GRAPH_COLOUR} opacity={0.15} />
+      <Circle cx={0} cy={0} r={18} color={GRAPH_COLOUR} opacity={0.15} />
+      <Circle cx={0} cy={0} r={9} opacity={0.15}>
+        <Paint style="stroke" strokeWidth={2} color="white" />
+      </Circle>
+    </Group>
+  );
+};
+
+export const useGraphTouchHandler = (x: SkiaMutableValue<number>) => {
+  const onTouch = useTouchHandler({
+    onActive: (pos) => {
+      x.current = pos.x;
+    },
+  });
+  return onTouch;
 };
 
 const App = () => {
@@ -94,17 +143,23 @@ const App = () => {
     const curve = start.interpolate(end, isTransitionCompleted.current) ?? "";
     return curve ? curve.toSVGString() : "";
   }, [transitionState, isTransitionCompleted, dateRange]);
+  const x = useValue(0);
+  const onTouch = useGraphTouchHandler(x);
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Canvas style={{ height: GRAPH_HEIGHT, width: GRAPH_WIDTH }}>
+      <Canvas
+        style={{ height: GRAPH_HEIGHT, width: GRAPH_WIDTH }}
+        onTouch={onTouch}
+      >
         <Path
           path={currentPath}
-          color={"#F7B49E"}
+          color={GRAPH_COLOUR}
           strokeWidth={4}
           style={"stroke"}
         />
+        <Cursor x={x} />
       </Canvas>
       <View
         style={{
