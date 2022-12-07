@@ -14,15 +14,13 @@ const makeGraph = (data: DataPoint[]): GraphData => {
   const maxDate = new Date(Math.max.apply(null, dates));
   const minDate = new Date(Math.min.apply(null, dates));
 
-  const getYAxis = scaleLinear().domain([0, maxValue]).range([GRAPH_HEIGHT, 0]);
+  const walkY = scaleLinear().domain([0, maxValue]).range([GRAPH_HEIGHT, 0]);
 
-  const getXAxis = scaleTime()
-    .domain([minDate, maxDate])
-    .range([0, GRAPH_WIDTH]);
+  const walkX = scaleTime().domain([minDate, maxDate]).range([0, GRAPH_WIDTH]);
 
   const curvedLine = line<DataPoint>()
-    .x((dataPoint) => getXAxis(new Date(dataPoint.date)))
-    .y((dataPoint) => getYAxis(dataPoint.value))
+    .x((dataPoint) => walkX(new Date(dataPoint.date)))
+    .y((dataPoint) => walkY(dataPoint.value))
     .curve(curveBasis)(data);
 
   const skPath = Skia.Path.MakeFromSVGString(curvedLine);
