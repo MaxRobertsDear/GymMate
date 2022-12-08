@@ -1,5 +1,6 @@
 import { Skia } from "@shopify/react-native-skia";
 import { curveBasis, line, scaleLinear, scaleTime } from "d3";
+import { parse } from "react-native-redash";
 import { GRAPH_HEIGHT, GRAPH_WIDTH } from "../constants";
 import { DataPoint, GraphData } from "../types";
 
@@ -23,12 +24,15 @@ const makeGraph = (data: DataPoint[]): GraphData => {
     .y((dataPoint) => walkY(dataPoint.value))
     .curve(curveBasis)(data);
 
+  const parsedPath = parse(curvedLine);
+
   const skPath = Skia.Path.MakeFromSVGString(curvedLine);
 
   return {
     max: maxValue,
     min: minValue,
     curve: skPath,
+    parsedPath,
   };
 };
 

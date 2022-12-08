@@ -10,28 +10,18 @@ import {
   useComputedValue,
   useTouchHandler,
   useValue,
-  useDerivedValue,
-  add,
-  clamp,
-  dist,
-  runDecay,
   SkiaMutableValue,
-  vec,
+  runDecay,
 } from "@shopify/react-native-skia";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Text,
-  useWindowDimensions,
-} from "react-native";
+import { Pressable, StyleSheet, View, Text } from "react-native";
 import { GRAPH_HEIGHT, GRAPH_WIDTH } from "./constants";
 import { originalData } from "./Data";
 import makeGraph from "./utils/makeGraph";
 import sliceIntoChunks from "./utils/sliceIntoChunks";
 import { Picker } from "@react-native-picker/picker";
+import { getYForX } from "react-native-redash";
 
 const GRAPH_COLOUR = "#F7B49E";
 
@@ -49,11 +39,12 @@ type TransitionState = {
 
 interface CursorProps {
   x: SkiaValue<number>;
+  y: SkiaValue<number>;
 }
 
-const Cursor: React.FC<CursorProps> = ({ x }) => {
+const Cursor: React.FC<CursorProps> = ({ x, y }) => {
   const transform = useComputedValue(
-    () => [{ translateX: x.current }, { translateY: 100 }],
+    () => [{ translateX: x.current }, { translateY: y.current }],
     [x]
   );
   return (
@@ -71,6 +62,9 @@ export const useGraphTouchHandler = (x: SkiaMutableValue<number>) => {
   const onTouch = useTouchHandler({
     onActive: (pos) => {
       x.current = pos.x;
+    },
+    onEnd: (event) => {
+      runDecay(x, { velocity: event.velocityX, clamp: [0, GRAPH_WIDTH] });
     },
   });
   return onTouch;
@@ -144,6 +138,12 @@ const App = () => {
     return curve ? curve.toSVGString() : "";
   }, [transitionState, isTransitionCompleted, dateRange]);
   const x = useValue(0);
+  const y = useComputedValue(() => {
+    return getYForX(
+      graphData[transitionState.current.currentChart].parsedPath,
+      x.current
+    );
+  }, [transitionState, x]);
   const onTouch = useGraphTouchHandler(x);
 
   return (
@@ -159,7 +159,7 @@ const App = () => {
           strokeWidth={4}
           style={"stroke"}
         />
-        <Cursor x={x} />
+        <Cursor x={x} y={y} />
       </Canvas>
       <View
         style={{
