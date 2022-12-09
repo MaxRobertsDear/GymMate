@@ -22,6 +22,7 @@ import makeGraph from "./utils/makeGraph";
 import sliceIntoChunks from "./utils/sliceIntoChunks";
 import { Picker } from "@react-native-picker/picker";
 import { getYForX } from "react-native-redash";
+import Zable from "./Zable";
 
 const GRAPH_COLOUR = "#F7B49E";
 
@@ -145,7 +146,7 @@ const App = () => {
     );
   }, [transitionState, x]);
   const onTouch = useGraphTouchHandler(x);
-
+  return <Zable />;
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
