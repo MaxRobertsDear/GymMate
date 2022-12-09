@@ -14,7 +14,7 @@ import Animated, {
   interpolateColor,
   withTiming,
 } from "react-native-reanimated";
-
+import { Audio } from "expo-av";
 import { products } from "./Model";
 import Card, { CARD_HEIGHT } from "./Card";
 import Products from "./Products";
@@ -46,6 +46,7 @@ const Zable = () => {
   const isToggled = useSharedValue(false);
   const toggleMenu = () => {
     isToggled.value = !isToggled.value;
+    playSound();
   };
 
   const menuItemLeft = useAnimatedStyle(() => ({
@@ -78,6 +79,28 @@ const Zable = () => {
     ],
     opacity: isToggled.value ? withTiming(1) : withTiming(0),
   }));
+
+  const [sound, setSound] = React.useState<Audio.Sound>();
+
+  async function playSound() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("./assets/mixkit-money-bag-drop-1989.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   return (
     <Animated.View style={style}>
