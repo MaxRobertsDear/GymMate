@@ -23,6 +23,8 @@ import sliceIntoChunks from "./utils/sliceIntoChunks";
 import { Picker } from "@react-native-picker/picker";
 import { getYForX } from "react-native-redash";
 import Zable from "./Zable";
+import WaveSwipe from "./WaveSwipe";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const GRAPH_COLOUR = "#F7B49E";
 
@@ -146,6 +148,11 @@ const App = () => {
     );
   }, [transitionState, x]);
   const onTouch = useGraphTouchHandler(x);
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <WaveSwipe />
+    </GestureHandlerRootView>
+  );
   return <Zable />;
   return (
     <View style={styles.container}>
