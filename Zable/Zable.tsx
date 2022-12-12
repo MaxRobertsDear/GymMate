@@ -132,7 +132,7 @@ const Zable = () => {
             {
               width: MENU_ITEM_SIZE,
               position: "absolute",
-              bottom: 40,
+              bottom: 60,
               alignSelf: "center",
               borderRadius: MENU_ITEM_SIZE / 2,
               height: MENU_ITEM_SIZE,
@@ -152,7 +152,7 @@ const Zable = () => {
             {
               width: MENU_ITEM_SIZE,
               position: "absolute",
-              bottom: 40,
+              bottom: 60,
               alignSelf: "center",
               borderRadius: MENU_ITEM_SIZE / 2,
               height: MENU_ITEM_SIZE,
@@ -172,7 +172,7 @@ const Zable = () => {
             {
               width: MENU_ITEM_SIZE,
               position: "absolute",
-              bottom: 40,
+              bottom: 60,
               alignSelf: "center",
               borderRadius: MENU_ITEM_SIZE / 2,
               height: MENU_ITEM_SIZE,
@@ -190,7 +190,7 @@ const Zable = () => {
         <Pressable
           style={{
             width: MENU_ITEM_SIZE * 1.4,
-            bottom: 30,
+            bottom: 50,
             borderRadius: (MENU_ITEM_SIZE * 1.4) / 2,
             height: MENU_ITEM_SIZE * 1.4,
           }}

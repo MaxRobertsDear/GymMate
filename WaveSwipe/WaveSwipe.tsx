@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import Slider from "./Slider";
 import Slide from "./Slide";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const slides = [
   {
@@ -32,6 +33,7 @@ const LiquidSwipe = () => {
   const prev = slides[index - 1];
   const next = slides[index + 1];
   return (
+    // <GestureHandlerRootView style={{ flex: 1 }}>
     <Slider
       key={index}
       index={index}
@@ -40,6 +42,7 @@ const LiquidSwipe = () => {
       current={<Slide slide={slides[index]!} />}
       next={next && <Slide slide={next} />}
     />
+    // </GestureHandlerRootView>
   );
 };
 
